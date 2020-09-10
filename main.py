@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 import discord
 
 token = open("token.text", "r").read()
@@ -17,4 +15,3 @@ async def on_message(message):  # event that happens per any message.
         await message.channel.send('Hi!')
 
   client.run(token)
->>>>>>> Stashed changes
