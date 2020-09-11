@@ -5,7 +5,7 @@ from keep_alive import keep_alive
 
 client = commands.Bot(command_prefix='>')
 
-#we dont talk about what is above
+# we dont talk about what is above
 
 
 @client.event
