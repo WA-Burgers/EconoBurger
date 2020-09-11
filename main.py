@@ -7,6 +7,8 @@ client = commands.Bot(command_prefix='>')
 
 # we dont talk about what is above
 
+# adding another comment?
+
 
 @client.event
 async def on_ready():
