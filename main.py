@@ -32,18 +32,17 @@ async def on_message(message):
     
 @client.command(aliases=['8ball',]) #8ball WOOOOOOO!
 async def _8ball(ctx, *, question):
-      responses = replies
-      await ctx.send(f'Question: ```CSS\n{question}```\nAnswer: ```CSS\n{random.choice(responses)}```')
+      await ctx.send(f'Question: ```CSS\n{question}```\nAnswer: ```CSS\n{random.choice(replies)}```')
 
 
 @client.command(aliases = ['purge'])
 @commands.has_permissions(manage_messages=True)
 async def clear(ctx, amount=5):
     await ctx.channel.purge(limit=amount + 1 )
-@clear.error
-async def clear_error(ctx, error):
-    if isinstance(error, commands.MissingRole):
-        await ctx.send('Sorry you are not allowed to use this command.')
+    @clear.error
+    async def clear_error(ctx, error):
+        if isinstance(error, commands.MissingRole):
+            await ctx.send('Sorry you are not allowed to use this command.')
 
 
 @client.command()
