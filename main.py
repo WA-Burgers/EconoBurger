@@ -3,14 +3,11 @@ import discord
 import random
 
 from discord.ext import commands
-from keep_alive import keep_alive
+from ballreplies import replies
 
 client = commands.Bot(command_prefix='>')
 
 # we dont talk about what is above
-
-# adding another comment?
-
 
 @client.event
 async def on_ready():
@@ -35,29 +32,8 @@ async def on_message(message):
     
 @client.command(aliases=['8ball',]) #8ball WOOOOOOO!
 async def _8ball(ctx, *, question):
-      responses = ["It is certain.",
-                  "It is decidedly so.",
-                  "Without a doubt.",
-                  "Yes - definitely.",
-                  "You may rely on it.",
-                  "As I see it, yes.",
-                  "Most likely.",
-                  "Outlook good.",
-                  "Yes.",
-                  "Signs point to yes.",
-                  "Reply hazy, try again.",
-                  "Ask again later.",
-                  "Better not tell you now.",
-                  "Cannot predict now.",
-                  "Concentrate and ask again.",
-                  "Don't count on it.",
-                  "My reply is no.",
-                  "Ask Hybrid about it",
-                  "Ask NullCube about it",
-                  "My sources say no.",
-                  "Outlook not so good.",
-                  "Very doubtful."]
-      await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
+      responses = replies
+      await ctx.send(f'Question: ```CSS\n{question}```\nAnswer: ```CSS\n{random.choice(responses)}```')
 
 
 @client.command()
@@ -78,5 +54,5 @@ async def on_member_remove(member):
     print(f'{member} has left the server.')
 
 
-keep_alive()  # keeps the repl running
+
 client.run(os.environ.get("DISCORD_BOT_SECRET"))
