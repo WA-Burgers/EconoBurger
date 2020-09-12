@@ -36,6 +36,16 @@ async def _8ball(ctx, *, question):
       await ctx.send(f'Question: ```CSS\n{question}```\nAnswer: ```CSS\n{random.choice(responses)}```')
 
 
+@client.command(aliases = ['purge'])
+@commands.has_permissions(manage_messages=True)
+async def clear(ctx, amount=5):
+    await ctx.channel.purge(limit=amount + 1 )
+@clear.error
+async def clear_error(ctx, error):
+    if isinstance(error, commands.MissingRole):
+        await ctx.send('Sorry you are not allowed to use this command.')
+
+
 @client.command()
 async def ping(ctx):
     """shows the latency between the client and the server in miliseconds"""
