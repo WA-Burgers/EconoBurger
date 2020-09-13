@@ -1,4 +1,5 @@
-wreplies = ['You applied for a job at a large tech company, You did not get the job, but you found some money on the streets afterwards!', 
+wreplies = [
+'You applied for a job at a large tech company, You did not get the job, but you found some money on the streets afterwards!', 
 'You have successfully taken out your target, good job Agent 47, you now have a hot date, here is some money for your hard work!',
 'You manage to pull off an amazing stunt, and you post it on YouTube. Your video goes viral, earning you a bunch of money!', 
 'No one gets out alive.... Except you, who also somehow managed to get some money in the process!', 
