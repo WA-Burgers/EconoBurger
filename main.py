@@ -4,6 +4,7 @@ import random
 
 from discord.ext import commands
 from ballreplies import replies
+from purgereplies import preplies
 
 client = commands.Bot(command_prefix='>')
 
@@ -32,18 +33,16 @@ async def on_message(message):
     
 @client.command(aliases=['8ball',]) #8ball WOOOOOOO!
 async def _8ball(ctx, *, question):
-      responses = replies
-      await ctx.send(f'Question: ```CSS\n{question}```\nAnswer: ```CSS\n{random.choice(responses)}```')
+      await ctx.send(f'Question: ```CSS\n{question}```\nAnswer: ```CSS\n{random.choice(replies)}```')
 
 
 @client.command(aliases = ['purge'])
-@commands.has_permissions(manage_messages=True)
-async def clear(ctx, amount=5):
-    await ctx.channel.purge(limit=amount + 1 )
-@clear.error
-async def clear_error(ctx, error):
-    if isinstance(error, commands.MissingRole):
-        await ctx.send(f'Sorry you are not allowed to use this command.')
+async def clear(ctx, amount = 5 + 1): 
+    authorperms = ctx.author.permissions_in(ctx.channel)
+    if authorperms.manage_messages:
+        await ctx.channel.purge(limit=amount)
+    else:
+        await ctx.send(f"{random.choice(preplies)}")
 
 
 @client.command()
@@ -55,13 +54,13 @@ async def ping(ctx):
 @client.event
 async def on_member_join(member):
     """logs a message when a user joins the server"""
-    print(f'{member} has joined the server!')
+    print(f"{member} has joined the server!")
 
 
 @client.event
 async def on_member_remove(member):
     """logs a message when a user leaves the server"""
-    print(f'{member} has left the server.')
+    print(f"{member} has left the server.")
 
 
 
