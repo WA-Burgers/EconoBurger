@@ -2,19 +2,24 @@ import os
 import discord
 import random
 
-from discord.ext import commands
+from discord.ext import commands, tasks
 from ballreplies import replies
+from itertools import cycle
 from permissiondeniedreplies import preplies
 
 client = commands.Bot(command_prefix='>')
+status = cycle(['Watching being worked on', 'Watching me causing the programmers pain'])
 
 # we dont talk about what is above
 
 @client.event
 async def on_ready():
-    """runs when bot comes online"""
+    change_status.start()
     print(f"Init as {client.user}")
 
+@tasks.loop(minutes=20)
+async def change_status(): 
+    await client.change_presence(activity=discord.Game(next(status)))
     
 @client.command(aliases=['8ball',]) #8ball WOOOOOOO!
 async def _8ball(ctx, *, question):
