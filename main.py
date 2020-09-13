@@ -4,7 +4,7 @@ import random
 
 from discord.ext import commands
 from ballreplies import replies
-from purgereplies import preplies
+from permissiondeniedreplies import preplies
 
 client = commands.Bot(command_prefix='>')
 
@@ -14,21 +14,6 @@ client = commands.Bot(command_prefix='>')
 async def on_ready():
     """runs when bot comes online"""
     print(f"Init as {client.user}")
-
-
-@client.event
-async def on_message(message):
-    """an event that happens when any message is sent"""
-    print(
-        f"{message.channel}: {message.author}: {message.author.name}: {message.content}"
-    )
-    if message.author == client.user:
-        return
-
-    if "hello" in message.content.lower():
-        await message.channel.send('Hi!')
-
-    await client.process_commands(message)
 
     
 @client.command(aliases=['8ball',]) #8ball WOOOOOOO!
@@ -50,6 +35,43 @@ async def ping(ctx):
     """shows the latency between the client and the server in miliseconds"""
     await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
 
+
+@client.command()
+async def kick(ctx, member : discord.Member, *, reason=None):
+    authorperms = ctx.author.permissions_in(ctx.channel)
+    if authorperms.kick_members:
+        await member.kick(reason=reason)
+        await ctx.send(f'Kicked {member.mention}')
+    else:
+        await ctx.send(f"{random.choice(preplies)}")
+
+
+@client.command()
+async def ban(ctx, member : discord.Member, *, reason=None):
+    authorperms = ctx.author.permissions_in(ctx.channel)
+    if authorperms.ban_members:
+        await member.ban(reason=reason)
+        await ctx.send(f'Banned {member.mention}')
+    else:
+        await ctx.send(f"{random.choice(preplies)}")
+
+
+@client.command()
+async def unban(ctx, *, member):
+    authorperms = ctx.author.permissions_in(ctx.channel)
+    if authorperms.ban_members:
+        banned_users = await ctx.guild.bans()
+        member_name , member_discriminator = member.split('#')
+
+        for ban_entry in banned_users:
+            user = ban_entry.user
+
+            if (user.name, user.discriminator) == (member_name, member_discriminator):
+                await ctx.guild.unban(user)
+                await ctx.send(f'Unbanned {user.mention}')
+                return
+    else:
+        await ctx.send(f"{random.choice(preplies)}")
 
 @client.event
 async def on_member_join(member):
