@@ -23,7 +23,12 @@ async def change_status():
     
 @client.command(aliases=['8ball',]) #8ball WOOOOOOO!
 async def _8ball(ctx, *, question):
-      await ctx.send(f'`Question: {question}`\n`Answer: {random.choice(replies)}`')
+    embed = discord.Embed()
+    embed.color = discord.Color.green()
+    embed.title = "Magic 8 Ball"
+    embed.description = f'Question: {question}\nAnswer: {random.choice(replies)}'
+    await ctx.send(embed=embed)
+    #   await ctx.send(f'`Question: {question}`\n`Answer: {random.choice(replies)}`')
 
 
 @client.event
