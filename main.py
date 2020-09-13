@@ -27,12 +27,17 @@ async def _8ball(ctx, *, question):
 
 
 @client.command(aliases = ['purge'])
-async def clear(ctx, amount = 5 + 1): 
+async def clear(ctx, amount : int): 
     authorperms = ctx.author.permissions_in(ctx.channel)
     if authorperms.manage_messages:
         await ctx.channel.purge(limit=amount)
     else:
         await ctx.send(f"{random.choice(preplies)}")
+
+@clear.error
+async def clear_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f'`Please specify an amount of messages to delete.`')
 
 
 @client.command()
@@ -77,6 +82,7 @@ async def unban(ctx, *, member):
                 return
     else:
         await ctx.send(f"{random.choice(preplies)}")
+
 
 @client.event
 async def on_member_join(member):
