@@ -24,7 +24,7 @@ async def change_status():
     await client.change_presence(activity=discord.Game(next(status)))
     
 
-@client.command()
+@client.command(aliases = ['bal',])
 async def balance(ctx):
     await open_account(ctx.author)
     user = ctx.author
@@ -46,14 +46,135 @@ async def work(ctx):
 
     user = ctx.author
 
-    earnings = random.randrange(101)
+    earnings = random.randrange(300)
 
-    await ctx.send(f'`{random.choice(wreplies)}`')
+    embed = discord.Embed()
+    embed.color = discord.Color.green()
+    embed.title = f"{random.choice(wreplies)}\nYou got the amount ¥{earnings}"
+    await ctx.send(embed=embed)
 
     users[str(user.id)]["wallet"] += earnings
 
     with open ("mainbank.json", "w") as f:
         json.dump(users,f)
+
+#used to deposit money from your wallet into your account
+@client.command()
+async def deposit(ctx,amount = None):
+    await open_account(ctx.author)
+
+    if amount == None:
+        embed = discord.Embed()
+        embed.color = discord.Color.red
+        embed.title = "Transaction failed"
+        embed.description = "Please enter the amount."
+        await ctx.send(embed=embed)
+        return
+
+    bal = await update_bank(ctx.author)
+
+    amount = int(amount)
+    if amount>bal[1]:
+        embed = discord.Embed()
+        embed.color = discord.Color.red
+        embed.title = "Transaction failed"
+        embed.description = "You don't have that much money in your wallet!"
+        await ctx.send(embed=embed)
+        return
+    if amount<0:
+        embed = discord.Embed()
+        embed.color = discord.Color.red
+        embed.title = "Transaction failed"
+        embed.description = "Please input a positive number!"
+        await ctx.send(embed=embed)
+        return
+
+    await update_bank(ctx.author,-1*amount)
+    await update_bank(ctx.author,amount, "bank")
+
+    embed = discord.Embed()
+    embed.color = discord.Color.green
+    embed.title = f"You deposited {amount} into your account!"
+    await ctx.send(embed=embed) 
+
+#used to send a user money from your account
+@client.command()
+async def send(ctx,member:discord.Member,amount = None):
+    await open_account(ctx.author)
+    await open_account(member)
+
+    if amount == None:
+        embed = discord.Embed()
+        embed.color = discord.Color.red
+        embed.title = "Transaction failed"
+        embed.description = "Please enter the amount."
+        await ctx.send(embed=embed)
+        return
+
+    bal = await update_bank(ctx.author)
+
+    amount = int(amount)
+    if amount>bal[1]:
+        embed = discord.Embed()
+        embed.color = discord.Color.red
+        embed.title = "Transaction failed"
+        embed.description = "You don't have that much money in your account!"
+        await ctx.send(embed=embed)
+        return
+    if amount<0:
+        embed = discord.Embed()
+        embed.color = discord.Color.red
+        embed.title = "Transaction failed"
+        embed.description = "Please input a positive number!"
+        await ctx.send(embed=embed)
+        return
+
+    await update_bank(ctx.author,-1*amount, "bank")
+    await update_bank(member,amount, "bank")
+
+    embed = discord.Embed()
+    embed.color = discord.Color.green
+    embed.title = f"You gave {amount} from your account!"
+    await ctx.send(embed=embed)
+
+#used to take money out of your account and put into your wallet
+@client.command()
+async def withdraw(ctx,amount = None):
+    await open_account(ctx.author)
+
+    if amount == None:
+        embed = discord.Embed()
+        embed.color = discord.Color.red
+        embed.title = "Transaction failed"
+        embed.description = "Please enter the amount."
+        await ctx.send(embed=embed)
+        return
+
+    bal = await update_bank(ctx.author)
+
+    amount = int(amount)
+    if amount>bal[1]:
+        embed = discord.Embed()
+        embed.color = discord.Color.red
+        embed.title = "Transaction failed"
+        embed.description = "You don't have that much money in your account!"
+        await ctx.send(embed=embed)
+        return
+    if amount<0:
+        embed = discord.Embed()
+        embed.color = discord.Color.red
+        embed.title = "Transaction failed"
+        embed.description = "Please input a positive number!"
+        await ctx.send(embed=embed)
+        return
+
+    await update_bank(ctx.author,amount)
+    await update_bank(ctx.author,-1*amount, "bank")
+
+    embed = discord.Embed()
+    embed.color = discord.Color.green
+    embed.title = f"You withdrew {amount} from your account!"
+    await ctx.send(embed=embed)    
 
 async def open_account(user):
 
@@ -77,11 +198,26 @@ async def get_bank_data():
     with open("mainbank.json", "r") as f:
         users = json.load(f)
     return users 
+
+async def update_bank(user,change = 0, mode = "wallet"):
+    users = await get_bank_data()
+
+    users[str(user.id)][mode] += change
+
+    with open ("mainbank.json", "w") as f:
+        json.dump(users,f)
+    return True
     
+    bal = [users[str(user.id)]["wallet"],users[str(user.id)]["bank"]]
+    return user
 
 @client.command(aliases=['8ball',]) #8ball WOOOOOOO!
 async def _8ball(ctx, *, question):
-      await ctx.send(f'`Question: {question}`\n`Answer: {random.choice(replies)}`')
+    embed = discord.Embed()
+    embed.color = discord.Color.green()
+    embed.title = "Magic 8 Ball"
+    embed.description = f'Question: {question}\nAnswer: {random.choice(replies)}'
+    await ctx.send(embed=embed)
 
 
 @client.event
