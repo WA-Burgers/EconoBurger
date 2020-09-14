@@ -23,13 +23,20 @@ async def change_status():
     
 @client.command(aliases=['8ball',]) #8ball WOOOOOOO!
 async def _8ball(ctx, *, question):
-      await ctx.send(f'`Question: {question}`\n`Answer: {random.choice(replies)}`')
-
+    embed = discord.Embed()
+    embed.color = discord.Color.purple()
+    embed.title = f"Magic 8 Ball"
+    embed.description = f'Question: {question}\n\nAnswer: {random.choice(replies)}'
+    await ctx.send(embed=embed)
 
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        await ctx.send(f'`Invalid command used`')
+        embed = discord.Embed()
+        embed.color = discord.Color.red()
+        embed.title = f'Invalid command used'
+        embed.description = "Please check your syntax and try again :D"
+        await ctx.send(embed=embed)
 
 @client.command(aliases = ['purge'])
 async def clear(ctx, amount : int): 
@@ -37,12 +44,19 @@ async def clear(ctx, amount : int):
     if authorperms.manage_messages:
         await ctx.channel.purge(limit=amount)
     else:
-        await ctx.send(f"`{random.choice(preplies)}`")
+        embed = discord.Embed()
+        embed.color = discord.Color.red()
+        embed.title = f'{random.choice(preplies)}'
+        await ctx.send(embed=embed)
 
 @clear.error
 async def clear_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f'`Please specify an amount of messages to delete.`')
+        embed = discord.Embed()
+        embed.color = discord.Color.red()
+        embed.title = f'error'
+        embed.description = f'Please specify the number of messages to delete :D'
+        await ctx.send(embed=embed)
 
 
 @client.command()
@@ -56,9 +70,15 @@ async def kick(ctx, member : discord.Member, *, reason=None):
     authorperms = ctx.author.permissions_in(ctx.channel)
     if authorperms.kick_members:
         await member.kick(reason=reason)
-        await ctx.send(f'`Kicked {member.mention}`')
+        embed = discord.Embed()
+        embed.color = discord.Color.orange()
+        embed.title = f'Kicked {member.mention}'
+        await ctx.send(embed=embed)
     else:
-        await ctx.send(f"`{random.choice(preplies)}`")
+        embed = discord.Embed()
+        embed.color = discord.Color.red()
+        embed.title = f'{random.choice(preplies)}'
+        await ctx.send(embed=embed)
 
 
 @client.command()
@@ -66,9 +86,16 @@ async def ban(ctx, member : discord.Member, *, reason=None):
     authorperms = ctx.author.permissions_in(ctx.channel)
     if authorperms.ban_members:
         await member.ban(reason=reason)
-        await ctx.send(f'`Banned {member.mention}`')
+        embed = discord.Embed()
+        embed.color = discord.Color.orange()
+        embed.title = f'Banned {member.mention}'
+        await ctx.send(embed=embed)
+
     else:
-        await ctx.send(f"`{random.choice(preplies)}`")
+        embed = discord.Embed()
+        embed.color = discord.Color.red()
+        embed.title = f'{random.choice(preplies)}'
+        await ctx.send(embed=embed)
 
 
 @client.command()
@@ -83,22 +110,28 @@ async def unban(ctx, *, member):
 
             if (user.name, user.discriminator) == (member_name, member_discriminator):
                 await ctx.guild.unban(user)
-                await ctx.send(f'`Unbanned {user.mention}`')
+                embed = discord.Embed()
+                embed.color = discord.Color.orange()
+                embed.title = f'Unbanned {member.mention}'
+                await ctx.send(embed=embed)
                 return
     else:
-        await ctx.send(f"`{random.choice(preplies)}`")
+        embed = discord.Embed()
+        embed.color = discord.Color.red()
+        embed.title = f'{random.choice(preplies)}'
+        await ctx.send(embed=embed)
 
 
-@client.event
-async def on_member_join(member):
-    """logs a message when a user joins the server"""
-    await ctx.send(f"`{member} has joined the server!`")
+# @client.event
+# async def on_member_join(member):
+#     """logs a message when a user joins the server"""
+#     await ctx.send(f"`{member} has joined the server!`")
 
 
-@client.event
-async def on_member_remove(member):
-    """logs a message when a user leaves the server"""
-    await ctx.send(f"`{member} has left the server.`")
+# @client.event
+# async def on_member_remove(member):
+#     """logs a message when a user leaves the server"""
+#     await ctx.send(f"`{member} has left the server.`")
 
 
 
