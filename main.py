@@ -12,6 +12,8 @@ from permissiondeniedreplies import preplies
 client = commands.Bot(command_prefix='$')
 status = cycle(['Watching being worked on', 'Watching me causing the programmers pain'])
 
+earningRange = 101
+
 # we dont talk about what is above
 
 @client.event
