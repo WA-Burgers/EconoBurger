@@ -12,6 +12,8 @@ from permissiondeniedreplies import preplies
 client = commands.Bot(command_prefix='$')
 status = cycle(['Watching being worked on', 'Watching me causing the programmers pain'])
 
+earningRange = 101
+
 # we dont talk about what is above
 
 @client.event
@@ -46,7 +48,7 @@ async def work(ctx):
 
     user = ctx.author
 
-    earnings = random.randrange(101)
+    earnings = random.randrange(earningRange)
 
     await ctx.send(f'`{random.choice(wreplies)}`')
 
