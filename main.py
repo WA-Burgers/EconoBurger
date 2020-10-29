@@ -12,7 +12,7 @@ from permissiondeniedreplies import preplies
 
 logging.basicConfig(level=logging.INFO)
 
-client = commands.Bot(command_prefix='$')
+client = commands.Bot(command_prefix='>')
 status = cycle(['Watching being worked on', 'Watching me causing the programmers pain'])
 
 earningRange = 18
