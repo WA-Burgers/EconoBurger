@@ -1,3 +1,3 @@
 # EconoBurger
 
-Economy bot made by three students 
+Economy bot made by one student
