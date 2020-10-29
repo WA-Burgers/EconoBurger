@@ -457,13 +457,13 @@ async def _8ball(ctx, *, question):
     embed.description = f'Question: {question}\nAnswer: {random.choice(replies)}'
     await ctx.send(embed=embed)
 
-
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         embed = discord.Embed()
         embed.color = discord.Color.red()
-        embed.title = 'Invalid command used!'
+        embed.title = f'Invalid command used'
+        embed.description = "Please check your syntax and try again :D"
         await ctx.send(embed=embed)
 
 @client.command(aliases = ['purge'])
@@ -482,8 +482,10 @@ async def clear_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         embed = discord.Embed()
         embed.color = discord.Color.red()
-        embed.title = 'Please specify an amount of messages to delete!'
+        embed.title = f'error'
+        embed.description = f'Please specify the number of messages to delete :D'
         await ctx.send(embed=embed)
+
 
 @client.command()
 async def ping(ctx):
@@ -497,7 +499,10 @@ async def kick(ctx, member : discord.Member, *, reason=None):
     authorperms = ctx.author.permissions_in(ctx.channel)
     if authorperms.kick_members:
         await member.kick(reason=reason)
-        await ctx.send(f'`Kicked {member.mention}`')
+        embed = discord.Embed()
+        embed.color = discord.Color.orange()
+        embed.title = f'Kicked {member.mention}'
+        await ctx.send(embed=embed)
     else:
         embed = discord.Embed()
         embed.color = discord.Color.red()
@@ -510,7 +515,11 @@ async def ban(ctx, member : discord.Member, *, reason=None):
     authorperms = ctx.author.permissions_in(ctx.channel)
     if authorperms.ban_members:
         await member.ban(reason=reason)
-        await ctx.send(f'`Banned {member.mention}`')
+        embed = discord.Embed()
+        embed.color = discord.Color.orange()
+        embed.title = f'Banned {member.mention}'
+        await ctx.send(embed=embed)
+
     else:
         embed = discord.Embed()
         embed.color = discord.Color.red()
@@ -530,7 +539,10 @@ async def unban(ctx, *, member):
 
             if (user.name, user.discriminator) == (member_name, member_discriminator):
                 await ctx.guild.unban(user)
-                await ctx.send(f'`Unbanned {user.mention}`')
+                embed = discord.Embed()
+                embed.color = discord.Color.orange()
+                embed.title = f'Unbanned {member.mention}'
+                await ctx.send(embed=embed)
                 return
     else:
         embed = discord.Embed()
@@ -539,16 +551,16 @@ async def unban(ctx, *, member):
         await ctx.send(embed=embed)
 
 
-@client.event
-async def on_member_join(member):
-    """logs a message when a user joins the server"""
-    await ctx.send(f"`{member} has joined the server!`")
+# @client.event
+# async def on_member_join(member):
+#     """logs a message when a user joins the server"""
+#     await ctx.send(f"`{member} has joined the server!`")
 
 
-@client.event
-async def on_member_remove(member):
-    """logs a message when a user leaves the server"""
-    await ctx.send(f"`{member} has left the server.`")
+# @client.event
+# async def on_member_remove(member):
+#     """logs a message when a user leaves the server"""
+#     await ctx.send(f"`{member} has left the server.`")
 
 
 
