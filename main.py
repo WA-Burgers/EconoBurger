@@ -452,7 +452,7 @@ async def update_bank(user,change = 0, mode = "wallet"):
 @client.command(aliases=['8ball',]) #8ball WOOOOOOO!
 async def _8ball(ctx, *, question):
     embed = discord.Embed()
-    embed.color = discord.Color.green()
+    embed.color = discord.Color.purple()
     embed.title = "Magic 8 Ball"
     embed.description = f'Question: {question}\nAnswer: {random.choice(replies)}'
     await ctx.send(embed=embed)
