@@ -24,9 +24,9 @@ async def on_ready():
     change_status.start()
     print(f"Init as {client.user}")
 
-@client.event
-async def on_message(logMessage):
-    print(f'{logMessage.author} in #{logMessage.channel}: "{logMessage.content}"')
+# @client.event
+# async def on_message(logMessage):
+#     print(f'{logMessage.author} in #{logMessage.channel}: "{logMessage.content}"')
 
 @tasks.loop(minutes=20)
 async def change_status(): 
