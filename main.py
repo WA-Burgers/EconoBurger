@@ -314,7 +314,6 @@ async def buy_this(user,item_name,amount):
     return [True,"Worked"]
 
 
-
 @client.command()
 async def sell(ctx,item,amount):
     await open_account(ctx.author)
