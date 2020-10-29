@@ -1,5 +1,6 @@
 import os
 import discord
+import logging
 import random
 import json
 
@@ -8,6 +9,8 @@ from ballreplies import replies
 from workreplies import wreplies
 from itertools import cycle
 from permissiondeniedreplies import preplies
+
+logging.basicConfig(level=logging.INFO)
 
 client = commands.Bot(command_prefix='$')
 status = cycle(['Watching being worked on', 'Watching me causing the programmers pain'])
@@ -20,6 +23,10 @@ earningRange = 18
 async def on_ready():
     change_status.start()
     print(f"Init as {client.user}")
+
+@client.event
+async def on_message(logMessage):
+    print(f'{logMessage.author} in #{logMessage.channel}: "{logMessage.content}"')
 
 @tasks.loop(minutes=20)
 async def change_status(): 
