@@ -540,11 +540,6 @@ class YTDLSource(discord.PCMVolumeTransformer):
         filename = data['url'] if stream else ytdl.prepare_filename(data)
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
-@client.command(name='die', help='This command returns a random last words')
-async def die(ctx):
-    responses = ['why have you brought my short life to an end', 'i could have done so much more', 'i have a family, kill them instead']
-    await ctx.send(choice(responses))
-
 @client.command(name='credits', help='This command returns the credits')
 async def credits(ctx):
     embed = discord.Embed()
