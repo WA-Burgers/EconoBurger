@@ -2,49 +2,36 @@ import os
 import discord
 import random
 import json
-import youtube_dl
-from discord.voice_client import VoiceClient
+import itertools
 from discord.ext import commands, tasks
 from ballreplies import replies
 from workreplies import wreplies
 from random import choice
-from discord.utils import get
-from discord import FFmpegPCMAudio
-from os import system
+from os import system 
 from itertools import cycle
 from permissiondeniedreplies import preplies
 
-client = commands.Bot(command_prefix='$')
+client = commands.Bot('$', description='Yet another music bot.')
 
 status = cycle(['Watching being worked on', 'Watching me causing the programmers pain'])
 
 earningRange = 18
-
-youtube_dl.utils.bug_reports_message = lambda: ''
-
-ytdl_format_options = {
-    'format': 'bestaudio/best',
-    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
-    'restrictfilenames': True,
-    'noplaylist': True,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'auto',
-    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
-}
-
-ffmpeg_options = {
-    'options': '-vn'
-}
 # we dont talk about what is above
+
+#i need to impilment cogs
 
 @client.event
 async def on_ready():
-    change_status.start()
     print(f"Init as {client.user}")
+    change_status.start()
+    for filename in os.listdir("./cogs"):
+        if filename.endswith(".py"):
+            try:
+                client.load_extension(f"cogs.{filename[:-3]}")
+                print(f"Loaded {filename}")
+            except Exception as e:
+                print(f"Failed to load {filename}")
+                print(f"ERROR {e}")
 
 @tasks.loop(minutes=20)
 async def change_status(): 
@@ -64,12 +51,61 @@ async def balance(ctx):
     em.add_field(name = "Bank balance", value = bank_amt)
     await ctx.send(embed = em)
 
-@client.event
-async def on_ready():
-    change_status.start()
-    print(f"Init as {client.user}")
-
 mainshop = [{"name":"MEE6Command","price":1000,"description":"You get your own MEE6 command! Contact one of the admins and send them the gif and/or some text with your gif!Can be bought multiple times)"}]
+
+@client.command(aliases=['8ball',]) #8ball WOOOOOOO!
+async def _8ball(ctx, *, question):
+    embed = discord.Embed()
+    embed.color = discord.Color.purple()
+    embed.title = "Magic 8 Ball"
+    embed.description = f'Question: {question}\nAnswer: {random.choice(replies)}'
+    await ctx.send(embed=embed)
+
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        embed = discord.Embed()
+        embed.color = discord.Color.red()
+        embed.title = f'Invalid command used'
+        embed.description = "Please check your syntax and try again :D"
+        await ctx.send(embed=embed)
+
+@client.command(aliases = ['purge'])
+async def clear(ctx, amount : int): 
+    authorperms = ctx.author.permissions_in(ctx.channel)
+    if authorperms.manage_messages:
+        await ctx.channel.purge(limit=amount)
+    else:
+        embed = discord.Embed()
+        embed.color = discord.Color.red()
+        embed.title = f'{random.choice(preplies)}'
+        await ctx.send(embed=embed)
+
+@clear.error
+async def clear_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        embed = discord.Embed()
+        embed.color = discord.Color.red()
+        embed.title = f'error'
+        embed.description = f'Please specify the number of messages to delete :D'
+        await ctx.send(embed=embed)
+
+
+@client.command()
+async def ping(ctx):
+    embed = discord.Embed()
+    embed.color = discord.Color.purple()
+    embed.title = f'Pong! {round(client.latency * 1000)}ms'
+    await ctx.send(embed=embed)
+
+
+@client.command(name='credits', help='This command returns the credits')
+async def credits(ctx):
+    embed = discord.Embed()
+    embed.color = discord.Color.green()
+    embed.title = 'Made by Hybrid...and pain'
+    await ctx.send(embed=embed)
+
 
 @client.command()
 @commands.cooldown(1, 600, commands.BucketType.user)
@@ -432,7 +468,7 @@ async def leaderboard(ctx,x = 10):
     index = 1
     for amt in total:
         id_ = leader_board[amt]
-        member = client.get_user(id_)
+        member = bot.get_user(id_)
         name = member.name
         em.add_field(name = f"{index}. {name}" , value = f"```CSS\n[¥{amt}]```",  inline = False)
         if index == x:
@@ -476,169 +512,5 @@ async def update_bank(user,change = 0, mode = "wallet"):
     bal = [users[str(user.id)]["wallet"],users[str(user.id)]["bank"]]
     return bal
 
-@client.command(aliases=['8ball',]) #8ball WOOOOOOO!
-async def _8ball(ctx, *, question):
-    embed = discord.Embed()
-    embed.color = discord.Color.purple()
-    embed.title = "Magic 8 Ball"
-    embed.description = f'Question: {question}\nAnswer: {random.choice(replies)}'
-    await ctx.send(embed=embed)
 
-@client.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
-        embed = discord.Embed()
-        embed.color = discord.Color.red()
-        embed.title = f'Invalid command used'
-        embed.description = "Please check your syntax and try again :D"
-        await ctx.send(embed=embed)
-
-@client.command(aliases = ['purge'])
-async def clear(ctx, amount : int): 
-    authorperms = ctx.author.permissions_in(ctx.channel)
-    if authorperms.manage_messages:
-        await ctx.channel.purge(limit=amount)
-    else:
-        embed = discord.Embed()
-        embed.color = discord.Color.red()
-        embed.title = f'{random.choice(preplies)}'
-        await ctx.send(embed=embed)
-
-@clear.error
-async def clear_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        embed = discord.Embed()
-        embed.color = discord.Color.red()
-        embed.title = f'error'
-        embed.description = f'Please specify the number of messages to delete :D'
-        await ctx.send(embed=embed)
-
-
-@client.command()
-async def ping(ctx):
-    embed = discord.Embed()
-    embed.color = discord.Color.purple()
-    embed.title = f'Pong! {round(client.latency * 1000)}ms'
-    await ctx.send(embed=embed)
-
-ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
-class YTDLSource(discord.PCMVolumeTransformer):
-    def __init__(self, source, *, data, volume=0.5):
-        super().__init__(source, volume)
-
-        self.data = data
-
-        self.title = data.get('title')
-        self.url = data.get('url')
-
-    @classmethod
-    async def from_url(cls, url, *, loop=None, stream=False):
-        loop = loop or asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
-
-        if 'entries' in data:
-            # take first item from a playlist
-            data = data['entries'][0]
-
-        filename = data['url'] if stream else ytdl.prepare_filename(data)
-        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
-
-@client.command(name='credits', help='This command returns the credits')
-async def credits(ctx):
-    embed = discord.Embed()
-    embed.color = discord.Color.green()
-    embed.title = 'Made by Hybrid...and pain'
-    await ctx.send(embed=embed)
-
-
-@client.command(name='join', help='This command makes the bot join the voice channel')
-async def join(ctx):
-    if not ctx.message.author.voice:
-        await ctx.send("You are not connected to a voice channel")
-        return
-    
-    else:
-        channel = ctx.message.author.voice.channel
-
-    await channel.connect()
-
-@client.command(name='queue', help='This command adds a song to the queue')
-async def queue_(ctx, url):
-    global queue
-
-    queue.append(url)
-    await ctx.send(f'`{url}` added to queue!')
-
-@client.command(name='remove', help='This command removes an item from the list')
-async def remove(ctx, number):
-    global queue
-
-    try:
-        del(queue[int(number)])
-        await ctx.send(f'Your queue is now `{queue}!`')
-    
-    except:
-        await ctx.send('Your queue is either **empty** or the index is **out of range**')
-        
-@client.command(pass_context=True, brief="This will play a song 'play [url]'", aliases=['pl'])
-async def play(ctx, url: str):
-    song_there = os.path.isfile("song.mp3")
-    try:
-        if song_there:
-            os.remove("song.mp3")
-    except PermissionError:
-        await ctx.send("Wait for the current playing music end or use the 'stop' command")
-        return
-    await ctx.send("Getting everything ready, playing audio soon")
-    print("Someone wants to play music let me get that ready for them...")
-    voice = get(bot.voice_clients, guild=ctx.guild)
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-    for file in os.listdir("./"):
-        if file.endswith(".mp3"):
-            os.rename(file, 'song.mp3')
-    voice.play(discord.FFmpegPCMAudio("song.mp3"))
-    voice.volume = 100
-    voice.is_playing()
-
-@client.command(name='pause', help='This command pauses the song')
-async def pause(ctx):
-    server = ctx.message.guild
-    voice_channel = server.voice_client
-
-    voice_channel.pause()
-
-@client.command(name='resume', help='This command resumes the song!')
-async def resume(ctx):
-    server = ctx.message.guild
-    voice_channel = server.voice_client
-
-    voice_channel.resume()
-
-@client.command(name='view', help='This command shows the queue')
-async def view(ctx):
-    await ctx.send(f'Your queue is now `{queue}!`')
-
-@client.command(name='leave', help='This command stops makes the bot leave the voice channel')
-async def leave(ctx):
-    voice_client = ctx.message.guild.voice_client
-    await voice_client.disconnect()
-
-@client.command(name='stop', help='This command stops the song!')
-async def stop(ctx):
-    server = ctx.message.guild
-    voice_channel = server.voice_client
-
-    voice_channel.stop()
-
-
-
-client.run(os.environ.get("DISCORD_BOT_SECRET"))
+client.run("NzU0NzQyMTMyNDE3MzY0MDQ1.X15KYg.l6lXe-5zfLp0cmgPCb7WRBpaW50")
