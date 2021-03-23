@@ -16,9 +16,7 @@ client = commands.Bot('$', description='Yet another music bot.')
 status = cycle(['Watching being worked on', 'Watching me causing the programmers pain'])
 
 earningRange = 18
-# we dont talk about what is above
 
-#i need to impilment cogs
 
 @client.event
 async def on_ready():
@@ -37,20 +35,6 @@ async def on_ready():
 async def change_status(): 
     await client.change_presence(activity=discord.Game(next(status)))
 
-@client.command(aliases = ['bal'])
-async def balance(ctx):
-    await open_account(ctx.author)
-    user = ctx.author
-    users = await get_bank_data()
-
-    wallet_amt = users[str(user.id)]["wallet"] 
-    bank_amt = users[str(user.id)]["bank"] 
-
-    em = discord.Embed(title = f"{ctx.author.name}'s balance",color = discord.Color.blurple())
-    em.add_field(name = "Wallet balance", value = wallet_amt)
-    em.add_field(name = "Bank balance", value = bank_amt)
-    await ctx.send(embed = em)
-
 mainshop = [{"name":"MEE6Command","price":1000,"description":"You get your own MEE6 command! Contact one of the admins and send them the gif and/or some text with your gif!Can be bought multiple times)"}]
 
 @client.command(aliases=['8ball',]) #8ball WOOOOOOO!
@@ -66,8 +50,8 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         embed = discord.Embed()
         embed.color = discord.Color.red()
-        embed.title = f'Invalid command used'
-        embed.description = "Please check your syntax and try again :D"
+        embed.title = 'Error, Command not found!'
+        embed.description = "Please check your command and try again."
         await ctx.send(embed=embed)
 
 @client.command(aliases = ['purge'])
@@ -86,8 +70,8 @@ async def clear_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         embed = discord.Embed()
         embed.color = discord.Color.red()
-        embed.title = f'error'
-        embed.description = f'Please specify the number of messages to delete :D'
+        embed.title = 'Error!'
+        embed.description = 'Please specify the number of messages to delete.'
         await ctx.send(embed=embed)
 
 
@@ -138,6 +122,21 @@ async def mine_error(ctx, error):
         await ctx.send(embed=embed)
     else:
         raise error
+
+#used to check your balance
+@client.command(aliases = ['bal'])
+async def balance(ctx):
+    await open_account(ctx.author)
+    user = ctx.author
+    users = await get_bank_data()
+
+    wallet_amt = users[str(user.id)]["wallet"] 
+    bank_amt = users[str(user.id)]["bank"] 
+
+    em = discord.Embed(title = f"{ctx.author.name}'s balance",color = discord.Color.blurple())
+    em.add_field(name = "Wallet balance", value = wallet_amt)
+    em.add_field(name = "Bank balance", value = bank_amt)
+    await ctx.send(embed = em)
 
 #used to deposit money from your wallet into your account
 @client.command(aliases = ['dep'])
@@ -513,4 +512,4 @@ async def update_bank(user,change = 0, mode = "wallet"):
     return bal
 
 
-client.run("[Token]")
+client.run("NzU0NzQyMTMyNDE3MzY0MDQ1.X15KYg._1QXP2OTwLUZMNnTalnuwaf_TIw")
